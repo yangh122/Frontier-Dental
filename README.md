@@ -23,6 +23,9 @@ pip install -r requirements.txt
 # Deterministic run, both categories, no API key needed:
 python -m src.main crawl --no-llm
 
+# Full run with LLM, api key needed:
+python -m src.main crawl
+
 # Output: data/products.json, data/products.csv, data/run_summary.json
 ```
 
