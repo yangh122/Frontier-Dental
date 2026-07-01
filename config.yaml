@@ -1,0 +1,68 @@
+# ---------------------------------------------------------------------------
+# Config-driven execution. Everything the crawl needs lives here so runs are
+# reproducible and no behavior is hard-coded in the source.
+# ---------------------------------------------------------------------------
+
+site:
+  base_url: "https://www.safcodental.com"
+  # Robots.txt disallows ?p=/?page= pagination params, so we discover products
+  # by traversing each subcategory listing rather than paging the parent.
+  sitemap: "https://www.safcodental.com/sitemap.xml"
+
+# The two categories in scope for this POC. Each is crawled via its
+# subcategories to keep listing pages small and avoid disallowed page params.
+categories:
+  - name: "Dental Exam Gloves"
+    root: "/catalog/gloves"
+    subcategories:
+      - "/catalog/gloves/chloroprene-gloves"
+      - "/catalog/gloves/latex-gloves"
+      - "/catalog/gloves/nitrile-gloves"
+      - "/catalog/gloves/surgical-gloves"
+      - "/catalog/gloves/vinyl-gloves"
+      - "/catalog/gloves/glove-holder"
+  - name: "Sutures & Surgical Products"
+    root: "/catalog/sutures-surgical-products"
+    subcategories:
+      - "/catalog/sutures-surgical-products/sutures"
+      - "/catalog/sutures-surgical-products/suture-needles"
+
+crawl:
+  # Politeness / rate limiting
+  min_delay_seconds: 2.0        # minimum wait between requests to same host
+  max_concurrency: 2            # simultaneous browser pages
+  timeout_seconds: 30
+  user_agent: "FrontierDentalPOC/0.1 (+contact: engineering@example.com)"
+  respect_robots: true
+
+  # Fetch strategy: httpx-first (listings + detail pages are server-rendered,
+  # incl. JSON-LD), escalate to a Playwright browser only when a page needs JS
+  # (e.g. variant swatches). Keeps the common path fast and browser-free.
+  render_mode: "auto"           # auto | never | always
+  render_min_bytes: 20000       # below this, auto-escalate to browser render
+
+  # Retry / recovery
+  max_retries: 3
+  backoff_base_seconds: 2.0     # exponential backoff base
+
+  # Limits for the POC run (prove it works without scraping everything)
+  max_products_per_subcategory: null   # null = no cap; set an int for quick runs
+
+llm:
+  enabled: true                 # set false to run fully deterministic / offline
+  # Provider-agnostic fallback. Swap vendor here without touching code.
+  #   anthropic -> reads ANTHROPIC_API_KEY, default model claude-haiku-4-5
+  #   openai    -> reads OPENAI_API_KEY,    default model gpt-4o-mini
+  provider: "anthropic"
+  model: "claude-haiku-4-5-20251001"   # cheap+fast for classify/fallback
+  # API key is read from the provider's env var (.env), never stored here.
+  max_fallback_calls: 200       # hard budget so a bad run can't rack up cost
+
+storage:
+  sqlite_path: "data/catalog.db"
+  export_dir: "data"
+  exports: ["json", "csv"]
+
+logging:
+  level: "INFO"
+  file: "logs/crawl.log"

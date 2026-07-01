@@ -1,0 +1,23 @@
+# Core scraping
+playwright==1.48.0          # headless browser for JS-rendered category listings
+selectolax==0.3.25          # fast HTML parsing for detail pages
+httpx==0.27.2               # sitemap fetch + lightweight HTTP
+
+# Data / schema
+pydantic==2.9.2             # typed product schema + validation
+pydantic-settings==2.5.2    # config from yaml/env
+
+# Config & CLI
+pyyaml==6.0.2
+typer==0.12.5               # config-driven CLI entrypoint
+click<8.2                  # typer 0.12.x is incompatible with click >=8.2
+
+# LLM fallback (optional, gated by config + API key). Provider-agnostic:
+# install the one matching llm.provider in config.yaml (both listed for convenience).
+anthropic==0.39.0
+openai==1.54.4
+
+# Utilities
+tenacity==9.0.0             # retry/backoff primitives
+python-dotenv==1.0.1        # secrets from .env
+structlog==24.4.0           # structured JSON logging

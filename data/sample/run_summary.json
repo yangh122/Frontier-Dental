@@ -1,0 +1,28 @@
+{
+  "duration_seconds": 124.6,
+  "discovered": 53,
+  "stored_total": 53,
+  "errors": 0,
+  "llm_calls": 0,
+  "quality": {
+    "total_seen": 53,
+    "accepted": 53,
+    "rejected": 0,
+    "duplicates": 0,
+    "reject_reasons": {},
+    "field_fill_rate": {
+      "brand": 1.0,
+      "sku": 1.0,
+      "price": 1.0,
+      "availability": 1.0,
+      "description": 1.0,
+      "image_urls": 1.0,
+      "pack_size": 0.66,
+      "category_path": 1.0
+    }
+  },
+  "exports": [
+    "data\\products.json",
+    "data\\products.csv"
+  ]
+}
